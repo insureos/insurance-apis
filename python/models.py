@@ -7,35 +7,32 @@ from mongoengine import (
     EmbeddedDocument,
     ListField,
     BooleanField,
-    EmbeddedDocumentField,
     ReferenceField,
     URLField,
 )
+from datetime import datetime
 
 
 class User(Document):
-    user_github_id = StringField(required=True, unique=True)
+    user_addr = StringField(required=True, unique=True)
     user_verifying_documents = URLField(required=True, unique=True)
-    user_github_name = StringField(required=True)
-    user_hashed_github_auth = StringField(required=True)
-    user_auth_salt = StringField(required=True)
-    user_emails = ListField(EmailField())
-    user_primary_email = EmailField()
-    user_profile_pic = URLField()
 
 
-class LPToken(EmbeddedDocument):
+class LPToken(Document):
+    lp = ReferenceField("LPPool", required=True, unique=True)
     lp_token_name = StringField(required=True)
     lp_token_image = StringField(required=True)
     lp_token_addr = StringField(required=True)
     lp_token_supply = IntField(required=True)
+    lp_token_created = DateTimeField(required=True, default=datetime.now())
+    lp_token_volume = IntField(required=True, default=0)
 
 
 class LPPool(Document):
     created_by = StringField(required=True)
     total_assets = IntField(required=True, default=0)
     total_liabilties = IntField(required=True, default=0)
-    tokenised = EmbeddedDocumentField(LPToken, default=None)
+    tokenised = ReferenceField(LPToken, default=None)
 
 
 class Insurance(Document):
@@ -66,6 +63,8 @@ class Claim(Document):
     vote_negative = IntField(required=True, default=0)
     voting_start = DateTimeField()
     claim_accepted = BooleanField(required=True, default=False)
+    claim_title = StringField(required=True)
+    claim_description = StringField(required=True)
 
 
 class StrategyProposal(Document):
