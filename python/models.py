@@ -9,6 +9,8 @@ from mongoengine import (
     BooleanField,
     ReferenceField,
     URLField,
+    FloatField,
+    EmbeddedDocumentListField,
 )
 from datetime import datetime
 
@@ -25,14 +27,18 @@ class LPToken(Document):
     lp_token_addr = StringField(required=True)
     lp_token_supply = IntField(required=True)
     lp_token_created = DateTimeField(required=True, default=datetime.now())
-    lp_token_volume = IntField(required=True, default=0)
 
 
 class LPPool(Document):
-    created_by = StringField(required=True)
+    pool_name = StringField(required=True, unique=True)
+    created_by = StringField(required=True, unique=True)
     total_assets = IntField(required=True, default=0)
     total_liabilties = IntField(required=True, default=0)
     tokenised = ReferenceField(LPToken, default=None)
+    pool_created_at = DateTimeField(required=True, default=datetime.now())
+    target_pool_size = IntField(required=True)
+    pool_lifecycle = IntField(required=True)
+    tokens_sold_last_month = IntField(required=True, default=0)
 
 
 class Insurance(Document):
@@ -56,14 +62,23 @@ class InsuranceProposal(Document):
     premium_due_date = DateTimeField()
 
 
+class ClaimVotes(EmbeddedDocument):
+    voter = StringField(required=True)
+    vote_amount = IntField(required=True)
+    vote_side = BooleanField(required=True)
+
+
 class Claim(Document):
-    insurance_proposal = ReferenceField(InsuranceProposal, required=True)
+    claim_id = StringField(required=True, unique=True)
+    claim_proposer_address = StringField(required=True)
     claim_amount = IntField(required=True)
     vote_positive = IntField(required=True, default=0)
     vote_negative = IntField(required=True, default=0)
-    voting_start = DateTimeField()
+    voting_start = DateTimeField(required=True, default=datetime.now())
+    voting_ended = BooleanField(required=True, default=False)
     claim_accepted = BooleanField(required=True, default=False)
     claim_title = StringField(required=True)
+    claim_votes = EmbeddedDocumentListField(ClaimVotes, default=[], required=True)
     claim_description = StringField(required=True)
 
 
@@ -77,3 +92,20 @@ class StrategyProposal(Document):
     vote = IntField(required=True, default=0)
     accepted = BooleanField(required=True, default=False)
     blocked = BooleanField(required=True, default=False)
+
+
+class OracleTimeSeriesData(EmbeddedDocument):
+    oracle_val = FloatField(required=True)
+    oracle_sync_time = DateTimeField(required=True)
+
+
+class Oracle(Document):
+    oracle_name = StringField(required=True, unique=True)
+    oracle_created_by = StringField(required=True)
+    oracle_data_point = StringField(required=True)
+    oracle_metadata_uri = URLField(required=True, unique=True)
+    oracle_percentage_change = FloatField(required=True)
+    oracle_val = EmbeddedDocumentListField(
+        OracleTimeSeriesData, required=True, default=[]
+    )
+    oracle_last_synced = DateTimeField(required=True)
