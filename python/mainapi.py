@@ -174,7 +174,7 @@ app = (
         FastAPI(),
         custom_middleware,
         global_config["Application"]["DB"],
-        ["*"],
+        list(global_config["Application"]["DOMAIN_CORS_LIST"]),
     )
     .build_application()
     .add_routes()
