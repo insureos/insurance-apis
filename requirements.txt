@@ -7,6 +7,7 @@ click==8.1.7
 dnspython==2.6.1
 exceptiongroup==1.2.0
 fastapi==0.110.0
+h11==0.14.0
 idna==3.6
 mongoengine==0.28.2
 mypy-extensions==1.0.0
@@ -22,3 +23,4 @@ starlette==0.36.3
 tomli==2.0.1
 typing_extensions==4.10.0
 urllib3==2.2.1
+uvicorn==0.29.0
