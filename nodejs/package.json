@@ -9,6 +9,7 @@
     "mongoose": "^8.2.3"
   },
   "scripts": {
-    "format": "npx prettier --write ."
+    "format": "npx prettier --write .",
+    "build": "npx tsc --outDir ./build"
   }
 }
