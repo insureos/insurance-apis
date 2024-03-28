@@ -45,6 +45,32 @@ class Application:
             """
             return {"message": "Service is up!"}
 
+        @self.app.get("/insurance")
+        async def get_open_insurances(pagination_request: PaginationRequest):
+            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+            insurances = (
+                Insurance.objects(reinsured=False)
+                .filter_by(expiry__gt=datetime.now())
+                .order_by("-expiry")
+                .skip(offset)
+                .limit(pagination_request.page_size)
+            )
+            insurance_json_list = []
+            for insurance in insurances:
+                insurance_json_list.append(insurance.to_mongo().to_dict())
+            return insurance_json_list
+
+        @self.app.get("/insurance/detail")
+        async def get_insurance_details(insurance_pubkey: str):
+            insurance = Insurance.objects(insurance_pubkey=insurance_pubkey).first()
+            insurance_proposals = InsuranceProposal.objects(insurance=insurance)
+            insurance_proposals_json_list = []
+            for insurance_proposal in insurance_proposals:
+                insurance_proposals_json_list.append(
+                    insurance_proposal.to_mongo().to_dict()
+                )
+            return insurance_proposals_json_list
+
         @self.app.get("/claim")
         async def get_all_claims(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
@@ -162,6 +188,17 @@ class Application:
                     insurance_proposal.to_mongo().to_dict()
                 )
             return insurance_proposals_json_list
+
+        @self.app.get("/strategy")
+        async def get_approved_strategy(pagination_request: PaginationRequest):
+            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+            strategies = (
+                Strategy.objects().skip(offset).limit(pagination_request.page_size)
+            )
+            strategy_json_list = []
+            for strategy in strategies:
+                strategy_json_list.append(strategy.to_mongo().to_dict())
+            return strategy_json_list
 
         return self
 

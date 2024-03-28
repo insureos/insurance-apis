@@ -50,6 +50,7 @@ class Insurance(Document):
     expiry = DateTimeField(required=True)
     metadata_link = URLField(required=True)
     reinsured = BooleanField(required=True, default=False)
+    insurance_pubkey = StringField(required=True, unique=True)
 
 
 class InsuranceProposal(Document):
@@ -82,8 +83,12 @@ class Claim(Document):
     claim_description = StringField(required=True)
 
 
+class Strategy(Document):
+    strategy = StringField(required=True, unique=True)
+
+
 class StrategyProposal(Document):
-    strategy_program = StringField(required=True)
+    strategy_program = ReferenceField(Strategy, required=True)
     insurance_proposal = ReferenceField(InsuranceProposal, required=True)
     stream_amount = IntField(required=True)
     stream_every = IntField(required=True)
