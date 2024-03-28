@@ -1,29 +1,22 @@
 import mongoose from 'mongoose';
 
 interface IInsurance {
-  insurance_account:mongoose.Schema.Types.String;
-  insurer_id: mongoose.Schema.Types.String;
-  insuranceId: mongoose.Schema.Types.String;
-  coverage: mongoose.Schema.Types.Number;
-  premium: mongoose.Schema.Types.Number;
-  minimumCommission: mongoose.Schema.Types.Number;
-  deductible: mongoose.Schema.Types.Number;
-  expiry: mongoose.Schema.Types.Number;
-  metadataLink: mongoose.Schema.Types.String;
+  created_by: mongoose.Schema.Types.ObjectId,
+  coverage: mongoose.Schema.Types.Number,
+  premium: mongoose.Schema.Types.Number,
+  minimum_commision: mongoose.Schema.Types.Number,
+  deductible: mongoose.Schema.Types.Number,
+  expiry: mongoose.Schema.Types.Date,
+  metadata_link: mongoose.Schema.Types.String,
+  reinsured: mongoose.Schema.Types.Boolean,
+  insurance_pubkey:mongoose.Schema.Types.String,
 }
 
 const InsuranceSchema = new mongoose.Schema<IInsurance>(
   {
-    insurance_account: {
-      type: mongoose.Schema.Types.String,
-      required: true,
-    },
-    insurer_id: {
-      type: mongoose.Schema.Types.String,
-      required: true,
-    },
-    insuranceId: {
-      type: mongoose.Schema.Types.String,
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
     coverage: {
@@ -34,7 +27,7 @@ const InsuranceSchema = new mongoose.Schema<IInsurance>(
       type: mongoose.Schema.Types.Number,
       required: true,
     },
-    minimumCommission: {
+    minimum_commision: {
       type: mongoose.Schema.Types.Number,
       required: true,
     },
@@ -46,10 +39,14 @@ const InsuranceSchema = new mongoose.Schema<IInsurance>(
       type: mongoose.Schema.Types.Number,
       required: true,
     },
-    metadataLink: {
+    metadata_link: {
       type: mongoose.Schema.Types.String,
       required: true,
     },
+    insurance_pubkey: {
+      type: mongoose.Schema.Types.String,
+      required: true
+    }
   },
   { versionKey: false },
 );

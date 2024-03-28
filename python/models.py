@@ -11,6 +11,7 @@ from mongoengine import (
     URLField,
     FloatField,
     EmbeddedDocumentListField,
+    EmbeddedDocumentField
 )
 from datetime import datetime
 
@@ -20,13 +21,10 @@ class User(Document):
     user_verifying_documents = URLField(required=True, unique=True)
 
 
-class LPToken(Document):
-    lp = ReferenceField("LPPool", required=True, unique=True)
+class LPToken(EmbeddedDocument):
     lp_token_name = StringField(required=True)
-    lp_token_image = StringField(required=True)
-    lp_token_addr = StringField(required=True)
-    lp_token_supply = IntField(required=True)
-    lp_token_created = DateTimeField(required=True, default=datetime.now())
+    lp_token_symbol = StringField(required=True)
+    lp_token_metadata_uri = URLField(required=True)
 
 
 class LPPool(Document):
@@ -34,15 +32,16 @@ class LPPool(Document):
     created_by = StringField(required=True, unique=True)
     total_assets = IntField(required=True, default=0)
     total_liabilties = IntField(required=True, default=0)
-    tokenised = ReferenceField(LPToken, default=None)
+    tokenised = EmbeddedDocumentField(LPToken, required=True)
     pool_created_at = DateTimeField(required=True, default=datetime.now())
     target_pool_size = IntField(required=True)
-    pool_lifecycle = IntField(required=True)
+    pool_lifecycle = DateTimeField(required=True)
     tokens_sold_last_month = IntField(required=True, default=0)
+    pool_pubkey = StringField(required=True,unique=True)
 
 
 class Insurance(Document):
-    created_by = StringField(required=True)
+    created_by = ReferenceField(User,required=True)
     coverage = IntField(required=True)
     premium = IntField(required=True)
     minimum_commision = IntField(required=True)
