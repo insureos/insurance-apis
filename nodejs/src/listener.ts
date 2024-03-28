@@ -16,3 +16,4 @@ export const addEventListener = (program: anchor.Program<Insurance>) => {
       });
   });
 };
+
