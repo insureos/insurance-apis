@@ -64,4 +64,33 @@ export interface IReInsuranceProposalAccepted {
 export interface IPremiumPayed {
   reinsurance: PublicKey;
   prepaymentTime: BN;
+  premiumVault: PublicKey;
+}
+
+export interface IStrategyProposed {
+  strategy: PublicKey;
+  streamAmount: BN;
+  streamEvery: BN;
+  numberOfStreams: BN;
+  premiumVault: PublicKey;
+  strategyId: String;
+  strategyProgram: PublicKey;
+}
+
+export interface IStrategyVoted {
+  strategy: PublicKey;
+  voter: PublicKey;
+  vote_amount: BN;
+  proposed_strategy_vote_account: PublicKey;
+}
+
+export interface IStrategyAccepted {
+  strategy: PublicKey;
+}
+
+export interface IStrategyBlocked {
+  strategy: PublicKey;
+}
+export interface IStrategyExecuted {
+  strategy: PublicKey;
 }

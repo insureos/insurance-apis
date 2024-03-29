@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
 
 interface IInsuranceProposal {
   insurance: mongoose.Schema.Types.ObjectId;
@@ -10,6 +10,7 @@ interface IInsuranceProposal {
   premium_due_date: mongoose.Schema.Types.Date;
   proposal_pubkey: mongoose.Schema.Types.String;
   sent: mongoose.Schema.Types.Boolean;
+  premium_vault: mongoose.Schema.Types.String;
 }
 
 const InsuranceProposalSchema = new mongoose.Schema<IInsuranceProposal>(
@@ -54,6 +55,9 @@ const InsuranceProposalSchema = new mongoose.Schema<IInsuranceProposal>(
       type: mongoose.Schema.Types.Boolean,
       required: true,
       default: false,
+    },
+    premium_vault: {
+      type: mongoose.Schema.Types.String,
     },
   },
   { versionKey: false },

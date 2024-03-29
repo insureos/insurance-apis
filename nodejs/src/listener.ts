@@ -10,6 +10,11 @@ import {
   IReInsuranceProposalProposed,
   IProposalSent,
   IReInsuranceProposalAccepted,
+  IStrategyProposed,
+  IStrategyVoted,
+  IStrategyAccepted,
+  IStrategyBlocked,
+  IStrategyExecuted,
 } from './events';
 import { checkTransactionSignature } from './utils';
 import { lpCreated } from './handlers/lpCreated';
@@ -17,6 +22,11 @@ import { lpAssetAdded } from './handlers/lpAssetAdded';
 import { reinsuranceProposalCreated } from './handlers/reinsuranceProposalCreated';
 import { reinsuranceProposalSent } from './handlers/reinsuranceproposalSent';
 import { reinsuranceProposalAccepted } from './handlers/reinsuranceProposalAccepted';
+import { strategyProposed } from './handlers/strategyProposed';
+import { strategyProposalVoted } from './handlers/strategyVoted';
+import { strategyAccepted } from './handlers/strategyAccepted';
+import { strategyBlocked } from './handlers/strategyBlocked';
+import { strategyExecuted } from './handlers/strategyExecuted';
 
 export const addEventListener = (program: anchor.Program<Insurance>) => {
   program.addEventListener('VerifiedUserAdded', (res: IInsurerRegistered, _, signature) => {
@@ -87,6 +97,56 @@ export const addEventListener = (program: anchor.Program<Insurance>) => {
       })
       .catch((e) => {
         console.log('Error sending reinsurance proposal: ', e);
+      });
+  });
+  program.addEventListener('StrategyProposed ', (res: IStrategyProposed, _, signature) => {
+    checkTransactionSignature(signature);
+    strategyProposed(res)
+      .then(() => {
+        console.log('strategy proposal loggeed');
+      })
+      .catch((e) => {
+        console.log('Error sending proposing strategy: ', e);
+      });
+  });
+  program.addEventListener('StrategyVoted ', (res: IStrategyVoted, _, signature) => {
+    checkTransactionSignature(signature);
+    strategyProposalVoted(res)
+      .then(() => {
+        console.log('strategy vote sent');
+      })
+      .catch((e) => {
+        console.log('Error sending strategy vote: ', e);
+      });
+  });
+  program.addEventListener('StrategyAccepted ', (res: IStrategyAccepted, _, signature) => {
+    checkTransactionSignature(signature);
+    strategyAccepted(res)
+      .then(() => {
+        console.log('strategy accepted');
+      })
+      .catch((e) => {
+        console.log('Error accepting strategy: ', e);
+      });
+  });
+  program.addEventListener('StrategyBlocked ', (res: IStrategyBlocked, _, signature) => {
+    checkTransactionSignature(signature);
+    strategyBlocked(res)
+      .then(() => {
+        console.log('strategy blocked');
+      })
+      .catch((e) => {
+        console.log('Error blocking strategy: ', e);
+      });
+  });
+  program.addEventListener('StrategyExecuted ', (res: IStrategyExecuted, _, signature) => {
+    checkTransactionSignature(signature);
+    strategyExecuted(res)
+      .then(() => {
+        console.log('strategy executed');
+      })
+      .catch((e) => {
+        console.log('Error executing strategy: ', e);
       });
   });
 };

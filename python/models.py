@@ -11,7 +11,7 @@ from mongoengine import (
     URLField,
     FloatField,
     EmbeddedDocumentListField,
-    EmbeddedDocumentField
+    EmbeddedDocumentField,
 )
 from datetime import datetime
 
@@ -37,11 +37,11 @@ class LPPool(Document):
     target_pool_size = IntField(required=True)
     pool_lifecycle = DateTimeField(required=True)
     tokens_sold_last_month = IntField(required=True, default=0)
-    pool_pubkey = StringField(required=True,unique=True)
+    pool_pubkey = StringField(required=True, unique=True)
 
 
 class Insurance(Document):
-    created_by = ReferenceField(User,required=True)
+    created_by = ReferenceField(User, required=True)
     coverage = IntField(required=True)
     premium = IntField(required=True)
     minimum_commision = IntField(required=True)
@@ -55,11 +55,14 @@ class Insurance(Document):
 class InsuranceProposal(Document):
     insurance = ReferenceField(Insurance, required=True)
     lp = ReferenceField(LPPool, required=True)
+    sent = BooleanField(required=True, default=False)
     accepted = BooleanField(required=True, default=False)
     proposal_docs = URLField(required=True, unique=True)
     proposed_commision = IntField(required=True)
     proposed_undercollaterization = IntField(required=True)
     premium_due_date = DateTimeField()
+    proposal_pubkey = StringField(required=True, unique=True)
+    premium_vault = StringField()
 
 
 class ClaimVotes(EmbeddedDocument):
@@ -92,10 +95,11 @@ class StrategyProposal(Document):
     stream_amount = IntField(required=True)
     stream_every = IntField(required=True)
     number_of_streams = IntField(required=True)
-    strategy_id = IntField(required=True)
+    strategy_id = StringField(required=True)
     vote = IntField(required=True, default=0)
     accepted = BooleanField(required=True, default=False)
     blocked = BooleanField(required=True, default=False)
+    proposal_pubkey = StringField(required=True, unique=True)
 
 
 class OracleTimeSeriesData(EmbeddedDocument):

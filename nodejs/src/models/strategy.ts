@@ -20,15 +20,16 @@ const Strategy = mongoose.model<IStrategy>('Strategy', StrategySchema);
 
 // StrategyProposal Interface and Schema
 interface IStrategyProposal {
-  strategy_program: mongoose.Types.ObjectId;
-  insurance_proposal: mongoose.Types.ObjectId;
-  stream_amount: number;
-  stream_every: number;
-  number_of_streams: number;
-  strategy_id: number;
-  vote: number;
-  accepted: boolean;
-  blocked: boolean;
+  strategy_program: mongoose.Schema.Types.ObjectId;
+  insurance_proposal: mongoose.Schema.Types.ObjectId;
+  stream_amount: mongoose.Schema.Types.Number;
+  stream_every: mongoose.Schema.Types.Number;
+  number_of_streams: mongoose.Schema.Types.Number;
+  strategy_id: mongoose.Schema.Types.String;
+  vote: mongoose.Schema.Types.Number;
+  accepted: mongoose.Schema.Types.Boolean;
+  blocked: mongoose.Schema.Types.Boolean;
+  proposal_pubkey: mongoose.Schema.Types.String;
 }
 
 const StrategyProposalSchema = new mongoose.Schema<IStrategyProposal>(
@@ -44,33 +45,33 @@ const StrategyProposalSchema = new mongoose.Schema<IStrategyProposal>(
       required: true,
     },
     stream_amount: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
     },
     stream_every: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
     },
     number_of_streams: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
     },
     strategy_id: {
-      type: Number,
+      type: mongoose.Schema.Types.String,
       required: true,
     },
     vote: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       default: 0,
       required: true,
     },
     accepted: {
-      type: Boolean,
+      type: mongoose.Schema.Types.Boolean,
       default: false,
       required: true,
     },
     blocked: {
-      type: Boolean,
+      type: mongoose.Schema.Types.Boolean,
       default: false,
       required: true,
     },
