@@ -2,10 +2,21 @@ import * as anchor from '@project-serum/anchor';
 import { Insurance } from '../type-file/insurance';
 import { insurerRegistered } from './handlers/insurerRegistered';
 import { insuranceRegistered } from './handlers/insuranceCreated';
-import { IInsurerRegistered, IInsuranceCreated, ILPCreated, ILPAssetAdded} from './events';
+import {
+  IInsurerRegistered,
+  IInsuranceCreated,
+  ILPCreated,
+  ILPAssetAdded,
+  IReInsuranceProposalProposed,
+  IProposalSent,
+  IReInsuranceProposalAccepted,
+} from './events';
 import { checkTransactionSignature } from './utils';
 import { lpCreated } from './handlers/lpCreated';
 import { lpAssetAdded } from './handlers/lpAssetAdded';
+import { reinsuranceProposalCreated } from './handlers/reinsuranceProposalCreated';
+import { reinsuranceProposalSent } from './handlers/reinsuranceproposalSent';
+import { reinsuranceProposalAccepted } from './handlers/reinsuranceProposalAccepted';
 
 export const addEventListener = (program: anchor.Program<Insurance>) => {
   program.addEventListener('VerifiedUserAdded', (res: IInsurerRegistered, _, signature) => {
@@ -48,5 +59,34 @@ export const addEventListener = (program: anchor.Program<Insurance>) => {
         console.log('Error Adding lp asset: ', e);
       });
   });
+  program.addEventListener('ReInsuranceProposalProposed', (res: IReInsuranceProposalProposed, _, signature) => {
+    checkTransactionSignature(signature);
+    reinsuranceProposalCreated(res)
+      .then(() => {
+        console.log('Reinsurance proposal proposed');
+      })
+      .catch((e) => {
+        console.log('Error proposing reinsurance proposal: ', e);
+      });
+  });
+  program.addEventListener('ProposalSent', (res: IProposalSent, _, signature) => {
+    checkTransactionSignature(signature);
+    reinsuranceProposalSent(res)
+      .then(() => {
+        console.log('reinsurance proposal sent');
+      })
+      .catch((e) => {
+        console.log('Error sending reinsurance proposal: ', e);
+      });
+  });
+  program.addEventListener('ReInsuranceProposalAccepted ', (res: IReInsuranceProposalAccepted, _, signature) => {
+    checkTransactionSignature(signature);
+    reinsuranceProposalAccepted(res)
+      .then(() => {
+        console.log('reinsurance proposal sent');
+      })
+      .catch((e) => {
+        console.log('Error sending reinsurance proposal: ', e);
+      });
+  });
 };
-

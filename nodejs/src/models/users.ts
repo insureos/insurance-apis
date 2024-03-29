@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 interface IUser {
-  user_addr: mongoose.Schema.Types.String,
-  user_verifying_documents: mongoose.Schema.Types.String,
+  user_addr: mongoose.Schema.Types.String;
+  user_verifying_documents: mongoose.Schema.Types.String;
 }
 
 const UserSchema = new mongoose.Schema<IUser>(
