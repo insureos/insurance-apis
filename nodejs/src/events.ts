@@ -94,3 +94,29 @@ export interface IStrategyBlocked {
 export interface IStrategyExecuted {
   strategy: PublicKey;
 }
+
+export interface IClaimRaised {
+  reinsurance: PublicKey;
+  claim: PublicKey;
+  claimAmount: BN;
+  claimMetadataLink: String;
+  claimId: String;
+}
+
+export interface IClaimVoted {
+  claim: PublicKey;
+  voter: PublicKey;
+  voteAmount: BN;
+  claimVoteAccount: PublicKey;
+  voteDirection: boolean;
+}
+
+export interface IClaimDecisionReleased {
+  claim: PublicKey;
+  decision: Boolean;
+}
+
+export interface IReInsuranceClaimed {
+  reinsurance: PublicKey;
+  claim: PublicKey;
+}

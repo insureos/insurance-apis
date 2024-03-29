@@ -1816,36 +1816,6 @@ export type Insurance = {
       ];
     },
     {
-      name: 'ReInsuranceProposed';
-      fields: [
-        {
-          name: 'lpOwner';
-          type: 'publicKey';
-          index: false;
-        },
-        {
-          name: 'proposedCommision';
-          type: 'u64';
-          index: false;
-        },
-        {
-          name: 'proposedUndercollaterization';
-          type: 'u64';
-          index: false;
-        },
-        {
-          name: 'insurance';
-          type: 'publicKey';
-          index: false;
-        },
-        {
-          name: 'proposalDocs';
-          type: 'string';
-          index: false;
-        },
-      ];
-    },
-    {
       name: 'ReInsuranceProposalAccepted';
       fields: [
         {
@@ -1934,17 +1904,7 @@ export type Insurance = {
           index: false;
         },
         {
-          name: 'claimAmount';
-          type: 'u64';
-          index: false;
-        },
-      ];
-    },
-    {
-      name: 'LPTokenised';
-      fields: [
-        {
-          name: 'lp';
+          name: 'claim';
           type: 'publicKey';
           index: false;
         },
@@ -2065,6 +2025,11 @@ export type Insurance = {
         },
         {
           name: 'claimMetadataLink';
+          type: 'string';
+          index: false;
+        },
+        {
+          name: 'claimId';
           type: 'string';
           index: false;
         },
@@ -4193,36 +4158,6 @@ export const IDL: Insurance = {
       ],
     },
     {
-      name: 'ReInsuranceProposed',
-      fields: [
-        {
-          name: 'lpOwner',
-          type: 'publicKey',
-          index: false,
-        },
-        {
-          name: 'proposedCommision',
-          type: 'u64',
-          index: false,
-        },
-        {
-          name: 'proposedUndercollaterization',
-          type: 'u64',
-          index: false,
-        },
-        {
-          name: 'insurance',
-          type: 'publicKey',
-          index: false,
-        },
-        {
-          name: 'proposalDocs',
-          type: 'string',
-          index: false,
-        },
-      ],
-    },
-    {
       name: 'ReInsuranceProposalAccepted',
       fields: [
         {
@@ -4311,17 +4246,7 @@ export const IDL: Insurance = {
           index: false,
         },
         {
-          name: 'claimAmount',
-          type: 'u64',
-          index: false,
-        },
-      ],
-    },
-    {
-      name: 'LPTokenised',
-      fields: [
-        {
-          name: 'lp',
+          name: 'claim',
           type: 'publicKey',
           index: false,
         },
@@ -4442,6 +4367,11 @@ export const IDL: Insurance = {
         },
         {
           name: 'claimMetadataLink',
+          type: 'string',
+          index: false,
+        },
+        {
+          name: 'claimId',
           type: 'string',
           index: false,
         },

@@ -2,84 +2,91 @@ import mongoose from 'mongoose';
 
 interface IClaimVotes {
   voter: string;
-  vote_amount: number;
+  vote_amount: mongoose.Schema.Types.Number;
   vote_side: boolean;
 }
 
 const ClaimVotesSchema = new mongoose.Schema<IClaimVotes>(
   {
     voter: {
-      type: String,
+      type: mongoose.Schema.Types.String,
       required: true,
     },
     vote_amount: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
     },
     vote_side: {
-      type: Boolean,
+      type: mongoose.Schema.Types.Boolean,
       required: true,
     },
   },
   { _id: false },
-); // Set _id to false for embedded documents if you don't want them to have their own _id.
+);
 
 interface IClaim {
-  claim_id: string;
-  claim_proposer_address: string;
-  claim_amount: number;
-  vote_positive: number;
-  vote_negative: number;
-  voting_start: Date;
-  voting_ended: boolean;
-  claim_accepted: boolean;
-  claim_title: string;
+  claim_id: mongoose.Schema.Types.String;
+  claim_addr: mongoose.Schema.Types.String;
+  claim_amount: mongoose.Schema.Types.Number;
+  vote_positive: mongoose.Schema.Types.Number;
+  vote_negative: mongoose.Schema.Types.Number;
+  voting_start: mongoose.Schema.Types.Date;
+  voting_ended: mongoose.Schema.Types.Boolean;
+  claim_accepted: mongoose.Schema.Types.Boolean;
+  claim_title: mongoose.Schema.Types.String;
   claim_votes: IClaimVotes[];
-  claim_description: string;
+  claim_description: mongoose.Schema.Types.String;
+  reinsurance: mongoose.Schema.Types.ObjectId;
+  claim_claimed: mongoose.Schema.Types.Boolean;
 }
 
 const ClaimSchema = new mongoose.Schema<IClaim>(
   {
     claim_id: {
-      type: String,
+      type: mongoose.Schema.Types.String,
       required: true,
       unique: true,
     },
-    claim_proposer_address: {
-      type: String,
+    claim_addr: {
+      type: mongoose.Schema.Types.String,
       required: true,
     },
     claim_amount: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
     },
     vote_positive: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
       default: 0,
     },
     vote_negative: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       required: true,
       default: 0,
     },
     voting_start: {
-      type: Date,
+      type: mongoose.Schema.Types.Date,
       required: true,
       default: Date.now, // Use Date.now to ensure the current time is used
     },
     voting_ended: {
-      type: Boolean,
+      type: mongoose.Schema.Types.Boolean,
       required: true,
       default: false,
     },
     claim_accepted: {
-      type: Boolean,
+      type: mongoose.Schema.Types.Boolean,
+      required: true,
+      default: false,
+    },
+    claim_claimed: {
+      type: mongoose.Schema.Types.Boolean,
       required: true,
       default: false,
     },
     claim_title: {
-      type: String,
+      type: mongoose.Schema.Types.String,
       required: true,
     },
     claim_votes: {
@@ -88,7 +95,12 @@ const ClaimSchema = new mongoose.Schema<IClaim>(
       required: true,
     },
     claim_description: {
-      type: String,
+      type: mongoose.Schema.Types.String,
+      required: true,
+    },
+    reinsurance: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'InsuranceProposal',
       required: true,
     },
   },

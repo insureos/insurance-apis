@@ -73,7 +73,7 @@ class ClaimVotes(EmbeddedDocument):
 
 class Claim(Document):
     claim_id = StringField(required=True, unique=True)
-    claim_proposer_address = StringField(required=True)
+    claim_addr = StringField(required=True)
     claim_amount = IntField(required=True)
     vote_positive = IntField(required=True, default=0)
     vote_negative = IntField(required=True, default=0)
@@ -83,6 +83,8 @@ class Claim(Document):
     claim_title = StringField(required=True)
     claim_votes = EmbeddedDocumentListField(ClaimVotes, default=[], required=True)
     claim_description = StringField(required=True)
+    reinsurance = ReferenceField(InsuranceProposal,required=True)
+    claim_claimed = BooleanField(required=True,default=False)
 
 
 class Strategy(Document):

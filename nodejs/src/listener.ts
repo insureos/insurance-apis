@@ -15,6 +15,10 @@ import {
   IStrategyAccepted,
   IStrategyBlocked,
   IStrategyExecuted,
+  IClaimRaised,
+  IClaimVoted,
+  IClaimDecisionReleased,
+  IReInsuranceClaimed,
 } from './events';
 import { checkTransactionSignature } from './utils';
 import { lpCreated } from './handlers/lpCreated';
@@ -27,6 +31,10 @@ import { strategyProposalVoted } from './handlers/strategyVoted';
 import { strategyAccepted } from './handlers/strategyAccepted';
 import { strategyBlocked } from './handlers/strategyBlocked';
 import { strategyExecuted } from './handlers/strategyExecuted';
+import { claimRaised } from './handlers/claimRaised';
+import { claimVoted } from './handlers/claimVoted';
+import { claimDecisionReleased } from './handlers/claimDecision';
+import { claimMoneySent } from './handlers/claimMoneySent';
 
 export const addEventListener = (program: anchor.Program<Insurance>) => {
   program.addEventListener('VerifiedUserAdded', (res: IInsurerRegistered, _, signature) => {
@@ -147,6 +155,46 @@ export const addEventListener = (program: anchor.Program<Insurance>) => {
       })
       .catch((e) => {
         console.log('Error executing strategy: ', e);
+      });
+  });
+  program.addEventListener('ClaimRaised ', (res: IClaimRaised, _, signature) => {
+    checkTransactionSignature(signature);
+    claimRaised(res)
+      .then(() => {
+        console.log('claim raised');
+      })
+      .catch((e) => {
+        console.log('Error raising claim: ', e);
+      });
+  });
+  program.addEventListener('ClaimVoted', (res: IClaimVoted, _, signature) => {
+    checkTransactionSignature(signature);
+    claimVoted(res)
+      .then(() => {
+        console.log('claim voted');
+      })
+      .catch((e) => {
+        console.log('Error voting claim: ', e);
+      });
+  });
+  program.addEventListener('ClaimDecisionReleased', (res: IClaimDecisionReleased, _, signature) => {
+    checkTransactionSignature(signature);
+    claimDecisionReleased(res)
+      .then(() => {
+        console.log('claim decision released');
+      })
+      .catch((e) => {
+        console.log('Error releasing claim decision: ', e);
+      });
+  });
+  program.addEventListener('ReInsuranceClaimed', (res: IReInsuranceClaimed, _, signature) => {
+    checkTransactionSignature(signature);
+    claimMoneySent(res)
+      .then(() => {
+        console.log('claim decision released');
+      })
+      .catch((e) => {
+        console.log('Error releasing claim decision: ', e);
       });
   });
 };
