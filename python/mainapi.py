@@ -38,14 +38,14 @@ class Application:
         return self
 
     def add_routes(self):
-        @self.app.get("/")
+        @self.app.get("/python/")
         async def sanity_check():
             """
             Health check endpoint to ensure the service is up and running.
             """
             return {"message": "Service is up!"}
 
-        @self.app.get("/insurance")
+        @self.app.get("/python/insurance")
         async def get_open_insurances(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             insurances = (
@@ -60,7 +60,7 @@ class Application:
                 insurance_json_list.append(insurance.to_mongo().to_dict())
             return insurance_json_list
 
-        @self.app.get("/insurance/detail")
+        @self.app.get("/python/insurance/detail")
         async def get_insurance_details(insurance_pubkey: str):
             insurance = Insurance.objects(insurance_pubkey=insurance_pubkey).first()
             insurance_proposals = InsuranceProposal.objects(insurance=insurance)
@@ -71,7 +71,7 @@ class Application:
                 )
             return insurance_proposals_json_list
 
-        @self.app.get("/claim")
+        @self.app.get("/python/claim")
         async def get_all_claims(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             claims = (
@@ -91,12 +91,12 @@ class Application:
                 claims_json_list.append(claim_json)
             return claims_json_list
 
-        @self.app.get("/claim/table")
+        @self.app.get("/python/claim/table")
         async def get_claim_table(claim_id: str):
             claim = Claim.objects(claim_id=claim_id).first()
             return claim.claim_votes.to_mongo().to_dict()
 
-        @self.app.get("/lp/token")
+        @self.app.get("/python/lp/token")
         async def get_all_lp_tokens(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             lp_tokens = (
@@ -105,7 +105,7 @@ class Application:
             lp_tokens_json = [lp_token.to_mongo().to_dict() for lp_token in lp_tokens]
             return lp_tokens_json
 
-        @self.app.get("/lp/token/new")
+        @self.app.get("/python/lp/token/new")
         async def get_new_lp_token(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             lp_tokens = (
@@ -117,15 +117,15 @@ class Application:
             lp_tokens_json = [lp_token.to_mongo().to_dict() for lp_token in lp_tokens]
             return lp_tokens_json
 
-        @self.app.get("/mixpanel/proxy/{path}")
+        @self.app.get("/python/mixpanel/proxy/{path}")
         async def get_mixpanel_proxy(path: str, request: Request):
             return api_request(path, request)
 
-        @self.app.post("/mixpanel/proxy/{path}")
+        @self.app.post("/python/mixpanel/proxy/{path}")
         async def post_mixpanel_proxy(path: str, request: Request):
             return api_request(path, request)
 
-        @self.app.get("/oracle")
+        @self.app.get("/python/oracle")
         async def get_oracles(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             oracles = (
@@ -148,12 +148,12 @@ class Application:
                 )
             return oracles_json_list
 
-        @self.app.get("/oracle/graph")
+        @self.app.get("/python/oracle/graph")
         async def get_oracle_details(oracle_name: str):
             oracle = Oracle.objects(oracle_name=oracle_name).first()
             return oracle.oracle_val.to_mongo().to_dict()
 
-        @self.app.get("/lp")
+        @self.app.get("/python/lp")
         async def get_lps(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             lp_pools = (
@@ -178,7 +178,7 @@ class Application:
                 )
             return lp_pools_json_list
 
-        @self.app.get("/lp/detail")
+        @self.app.get("/python/lp/detail")
         async def get_lp_details(pool_name: str):
             lp = LPPool.objects(pool_name=pool_name).first()
             insurance_proposals = InsuranceProposal.objects(lp=lp, accepted=True)
@@ -189,7 +189,7 @@ class Application:
                 )
             return insurance_proposals_json_list
 
-        @self.app.get("/strategy")
+        @self.app.get("/python/strategy")
         async def get_approved_strategy(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             strategies = (
