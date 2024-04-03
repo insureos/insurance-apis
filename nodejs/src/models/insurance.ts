@@ -43,6 +43,11 @@ const InsuranceSchema = new mongoose.Schema<IInsurance>(
       type: mongoose.Schema.Types.String,
       required: true,
     },
+    reinsured: {
+      type: mongoose.Schema.Types.Boolean,
+      required: true,
+      default: false,
+    },
     insurance_pubkey: {
       type: mongoose.Schema.Types.String,
       required: true,

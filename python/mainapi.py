@@ -50,14 +50,18 @@ class Application:
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             insurances = (
                 Insurance.objects(reinsured=False)
-                .filter_by(expiry__gt=datetime.now())
+                .filter(expiry__gt=int(datetime.now().timestamp()))
                 .order_by("-expiry")
                 .skip(offset)
                 .limit(pagination_request.page_size)
             )
             insurance_json_list = []
             for insurance in insurances:
-                insurance_json_list.append(insurance.to_mongo().to_dict())
+                insurance_json = insurance.to_mongo().to_dict()
+                del insurance_json["_id"]
+                del insurance_json["created_by"]
+                insurance_json_list.append(insurance_json)
+                print(insurance_json)
             return insurance_json_list
 
         @self.app.get("/python/insurance/detail")
@@ -66,9 +70,11 @@ class Application:
             insurance_proposals = InsuranceProposal.objects(insurance=insurance)
             insurance_proposals_json_list = []
             for insurance_proposal in insurance_proposals:
-                insurance_proposals_json_list.append(
-                    insurance_proposal.to_mongo().to_dict()
-                )
+                insurance_json = insurance_proposal.to_mongo().to_dict()
+                del insurance_json["_id"]
+                del insurance_json["lp"]
+                del insurance_json["insurance"]
+                insurance_proposals_json_list.append(insurance_json)
             return insurance_proposals_json_list
 
         @self.app.get("/python/claim")
@@ -102,7 +108,11 @@ class Application:
             lp_tokens = (
                 LPToken.objects().skip(offset).limit(pagination_request.page_size)
             )
-            lp_tokens_json = [lp_token.to_mongo().to_dict() for lp_token in lp_tokens]
+            lp_tokens_json = []
+            for lp_token in lp_tokens:
+                lp_json = lp_token.to_mongo().to_dict()
+                del lp_json["_id"]
+                lp_tokens_json.append(lp_json)
             return lp_tokens_json
 
         @self.app.get("/python/lp/token/new")
@@ -114,7 +124,11 @@ class Application:
                 .skip(offset)
                 .limit(pagination_request.page_size)
             )
-            lp_tokens_json = [lp_token.to_mongo().to_dict() for lp_token in lp_tokens]
+            lp_tokens_json = []
+            for lp_token in lp_tokens:
+                lp_json = lp_token.to_mongo().to_dict()
+                del lp_json["_id"]
+                lp_tokens_json.append(lp_json)
             return lp_tokens_json
 
         @self.app.get("/python/mixpanel/proxy/{path}")
@@ -157,7 +171,7 @@ class Application:
         async def get_lps(pagination_request: PaginationRequest):
             offset = (pagination_request.page_no - 1) * pagination_request.page_size
             lp_pools = (
-                LPPool.objects(tokenised != None)
+                LPPool.objects(tokenised__exists=True)
                 .order_by("tokens_sold_last_month", "total_assets")
                 .skip(offset)
                 .limit(pagination_request.page_size)
@@ -170,17 +184,22 @@ class Application:
                         "created_by": lp_pool.created_by,
                         "current_pool_size": lp_pool.total_assets,
                         "target_pool_size": lp_pool.target_pool_size,
-                        "overcapitalization_ratio": round(
-                            lp_pool.total_liabilties / lp_pool.total_assets, 2
+                        "overcapitalization_ratio": (
+                            0
+                            if lp_pool.total_assets == 0
+                            else round(
+                                lp_pool.total_liabilties / lp_pool.total_assets, 2
+                            )
                         ),
                         "pool_lifecycle": lp_pool.pool_lifecycle,
+                        "pool_pubkey": lp_pool.pool_pubkey,
                     }
                 )
             return lp_pools_json_list
 
         @self.app.get("/python/lp/detail")
-        async def get_lp_details(pool_name: str):
-            lp = LPPool.objects(pool_name=pool_name).first()
+        async def get_lp_details(pool_pubkey: str):
+            lp = LPPool.objects(pool_pubkey=pool_pubkey).first()
             insurance_proposals = InsuranceProposal.objects(lp=lp, accepted=True)
             insurance_proposals_json_list = []
             for insurance_proposal in insurance_proposals:

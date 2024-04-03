@@ -37,7 +37,7 @@ import { claimDecisionReleased } from './handlers/claimDecision';
 import { claimMoneySent } from './handlers/claimMoneySent';
 
 export const addEventListener = (program: anchor.Program<Insurance>) => {
-  program.addEventListener('VerifiedUserAdded', (res: IInsurerRegistered, _, signature) => {
+  program.addEventListener('InsurerRegistered', (res: IInsurerRegistered, _, signature) => {
     checkTransactionSignature(signature);
     insurerRegistered(res)
       .then(() => {

@@ -21,10 +21,11 @@ class User(Document):
     user_verifying_documents = URLField(required=True, unique=True)
 
 
-class LPToken(EmbeddedDocument):
+class LPToken(Document):
     lp_token_name = StringField(required=True)
     lp_token_symbol = StringField(required=True)
     lp_token_metadata_uri = URLField(required=True)
+    meta = {"collection": "lptokens"}
 
 
 class LPPool(Document):
@@ -32,12 +33,13 @@ class LPPool(Document):
     created_by = StringField(required=True, unique=True)
     total_assets = IntField(required=True, default=0)
     total_liabilties = IntField(required=True, default=0)
-    tokenised = EmbeddedDocumentField(LPToken, required=True)
+    tokenised = ReferenceField(LPToken, required=True)
     pool_created_at = DateTimeField(required=True, default=datetime.now())
     target_pool_size = IntField(required=True)
     pool_lifecycle = DateTimeField(required=True)
     tokens_sold_last_month = IntField(required=True, default=0)
     pool_pubkey = StringField(required=True, unique=True)
+    meta = {"collection": "lppools"}
 
 
 class Insurance(Document):
@@ -46,10 +48,11 @@ class Insurance(Document):
     premium = IntField(required=True)
     minimum_commision = IntField(required=True)
     deductible = IntField(required=True, default=0)
-    expiry = DateTimeField(required=True)
+    expiry = IntField(required=True)
     metadata_link = URLField(required=True)
     reinsured = BooleanField(required=True, default=False)
     insurance_pubkey = StringField(required=True, unique=True)
+    meta = {"collection": "insurances"}
 
 
 class InsuranceProposal(Document):
@@ -63,6 +66,7 @@ class InsuranceProposal(Document):
     premium_due_date = DateTimeField()
     proposal_pubkey = StringField(required=True, unique=True)
     premium_vault = StringField()
+    meta = {"collection": "insuranceproposals"}
 
 
 class ClaimVotes(EmbeddedDocument):

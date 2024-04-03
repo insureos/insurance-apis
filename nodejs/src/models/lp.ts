@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export interface ILPPoolToken {
+interface ILPPoolToken {
   lp_token_name: mongoose.Schema.Types.String;
   lp_token_symbol: mongoose.Schema.Types.String;
   lp_token_metadata_uri: mongoose.Schema.Types.String;
@@ -11,7 +11,7 @@ interface ILpPool {
   created_by: mongoose.Schema.Types.String;
   total_assets: mongoose.Schema.Types.Number;
   total_liabilties: mongoose.Schema.Types.Number;
-  tokenised: ILPPoolToken;
+  tokenised: mongoose.Schema.Types.ObjectId;
   pool_created_at: mongoose.Schema.Types.Date;
   target_pool_size: mongoose.Schema.Types.Number;
   pool_lifecycle: mongoose.Schema.Types.Date;
@@ -19,20 +19,23 @@ interface ILpPool {
   pool_pubkey: mongoose.Schema.Types.String;
 }
 
-const LPPoolTokenSchema = new mongoose.Schema<ILPPoolToken>({
-  lp_token_name: {
-    type: mongoose.Schema.Types.String,
-    required: true,
+const LPPoolTokenSchema = new mongoose.Schema<ILPPoolToken>(
+  {
+    lp_token_name: {
+      type: mongoose.Schema.Types.String,
+      required: true,
+    },
+    lp_token_metadata_uri: {
+      type: mongoose.Schema.Types.String,
+      required: true,
+    },
+    lp_token_symbol: {
+      type: mongoose.Schema.Types.String,
+      required: true,
+    },
   },
-  lp_token_metadata_uri: {
-    type: mongoose.Schema.Types.String,
-    required: true,
-  },
-  lp_token_symbol: {
-    type: mongoose.Schema.Types.String,
-    required: true,
-  },
-});
+  { versionKey: false },
+);
 
 const LPPoolSchema = new mongoose.Schema<ILpPool>(
   {
@@ -53,7 +56,8 @@ const LPPoolSchema = new mongoose.Schema<ILpPool>(
       required: true,
     },
     tokenised: {
-      type: LPPoolTokenSchema,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'LPToken',
       required: true,
     },
     pool_created_at: {
@@ -81,3 +85,4 @@ const LPPoolSchema = new mongoose.Schema<ILpPool>(
 );
 
 export const LPPool = mongoose.model<ILpPool>('LPPool', LPPoolSchema);
+export const LPPoolToken = mongoose.model<ILPPoolToken>('LPToken', LPPoolTokenSchema);
