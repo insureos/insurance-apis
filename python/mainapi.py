@@ -10,8 +10,9 @@ from models import (
     InsuranceProposal,
     Claim,
     StrategyProposal,
+    Oracle,
+    Strategy
 )
-from pydantic_models import PaginationRequest
 from datetime import datetime, timedelta
 from middleware import custom_middleware
 from mixpanel_proxy import api_request
@@ -46,14 +47,14 @@ class Application:
             return {"message": "Service is up!"}
 
         @self.app.get("/python/insurance")
-        async def get_open_insurances(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_open_insurances(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             insurances = (
                 Insurance.objects(reinsured=False)
                 .filter(expiry__gt=int(datetime.now().timestamp()))
                 .order_by("-expiry")
                 .skip(offset)
-                .limit(pagination_request.page_size)
+                .limit(page_size)
             )
             insurance_json_list = []
             for insurance in insurances:
@@ -78,13 +79,13 @@ class Application:
             return insurance_proposals_json_list
 
         @self.app.get("/python/claim")
-        async def get_all_claims(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_all_claims(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             claims = (
                 Claim.objects(voting_ended=False)
                 .order_by("voting_start")
                 .skip(offset)
-                .limit(pagination_request.page_size)
+                .limit(page_size)
             )
             claims_json_list = []
             for claim in claims:
@@ -103,10 +104,10 @@ class Application:
             return claim.claim_votes.to_mongo().to_dict()
 
         @self.app.get("/python/lp/token")
-        async def get_all_lp_tokens(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_all_lp_tokens(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             lp_tokens = (
-                LPToken.objects().skip(offset).limit(pagination_request.page_size)
+                LPToken.objects().skip(offset).limit(page_size)
             )
             lp_tokens_json = []
             for lp_token in lp_tokens:
@@ -116,13 +117,13 @@ class Application:
             return lp_tokens_json
 
         @self.app.get("/python/lp/token/new")
-        async def get_new_lp_token(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_new_lp_token(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             lp_tokens = (
                 LPToken.objects()
                 .order_by("-lp_token_created")
                 .skip(offset)
-                .limit(pagination_request.page_size)
+                .limit(page_size)
             )
             lp_tokens_json = []
             for lp_token in lp_tokens:
@@ -140,13 +141,13 @@ class Application:
             return api_request(path, request)
 
         @self.app.get("/python/oracle")
-        async def get_oracles(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_oracles(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             oracles = (
                 Oracle.objects()
                 .order_by("-oracle_last_synced")
                 .skip(offset)
-                .limit(pagination_request.page_size)
+                .limit(page_size)
             )
             oracles_json_list = []
             for oracle in oracles:
@@ -168,13 +169,13 @@ class Application:
             return oracle.oracle_val.to_mongo().to_dict()
 
         @self.app.get("/python/lp")
-        async def get_lps(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_lps(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             lp_pools = (
                 LPPool.objects(tokenised__exists=True)
                 .order_by("tokens_sold_last_month", "total_assets")
                 .skip(offset)
-                .limit(pagination_request.page_size)
+                .limit(page_size)
             )
             lp_pools_json_list = []
             for lp_pool in lp_pools:
@@ -209,10 +210,10 @@ class Application:
             return insurance_proposals_json_list
 
         @self.app.get("/python/strategy")
-        async def get_approved_strategy(pagination_request: PaginationRequest):
-            offset = (pagination_request.page_no - 1) * pagination_request.page_size
+        async def get_approved_strategy(page_no: int, page_size: int):
+            offset = (page_no - 1) * page_size
             strategies = (
-                Strategy.objects().skip(offset).limit(pagination_request.page_size)
+                Strategy.objects().skip(offset).limit(page_size)
             )
             strategy_json_list = []
             for strategy in strategies:
